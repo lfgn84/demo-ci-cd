@@ -51,6 +51,8 @@ jobs:
           context: api/Demo.Api
           file: api/Demo.Api/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/demo-api:sha-${{ github.sha }}
+          tags: |
+            ghcr.io/${{ github.repository }}/demo-api:sha-${{ github.sha }}
+            ghcr.io/${{ github.repository }}/demo-api:latest
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/demo-api:buildcache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository }}/demo-api:buildcache,mode=max
