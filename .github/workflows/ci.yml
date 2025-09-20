@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+
+jobs:
+  build-test-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write   # for GHCR with GITHUB_TOKEN
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore & Build
+        working-directory: api/Demo.Api
+        run: |
+          dotnet restore
+          dotnet build --configuration Release --no-restore
+
+      - name: Test
+        if: ${{ hashFiles('api/Demo.Api.Tests/**/*.csproj') != '' }}
+        working-directory: api/Demo.Api.Tests
+        run: |
+          dotnet restore
+          dotnet test --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push image
+        uses: docker/build-push-action@v6
+        with:
+          context: api/Demo.Api
+          file: api/Demo.Api/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/demo-api:sha-${{ github.sha }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/demo-api:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}/demo-api:buildcache,mode=max
