@@ -11,6 +11,7 @@ This repository is a small, end-to-end demo that shows:
 ---
 
 ## Repository structure
+```
 .
 ├─ api/
 │ ├─ Demo.Api/ # .NET 8 minimal API + Dockerfile
@@ -20,6 +21,7 @@ This repository is a small, end-to-end demo that shows:
 ├─ infra/
 │ └─ k8s/ # Terraform (kubernetes provider) for the same resources
 └─ .github/workflows/ci.yml # GitHub Actions pipeline (CI -> GHCR)
+```
 
 ---
 
