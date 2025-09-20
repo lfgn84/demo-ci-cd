@@ -31,7 +31,7 @@ jobs:
         working-directory: api/Demo.Api.Tests
         run: |
           dotnet restore
-          dotnet test --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
+          dotnet test --configuration Release --logger "trx;LogFileName=test_results.trx"
 
       - name: Login to GHCR
         uses: docker/login-action@v3
